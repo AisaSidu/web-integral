@@ -1,0 +1,158 @@
+/* --- Variables y Estilos Base --- */
+:root {
+    --primary-color: #6C63FF; /* morado juvenil */
+    --secondary-color: #FF6584; /* rosa vibrante */
+    --accent-color: #00C9A7; /* verde agua */
+    --background-gradient: linear-gradient(135deg, #A1C4FD, #C2E9FB, #FBC2EB, #A6C1EE);
+    --form-background: rgba(255, 255, 255, 0.8);
+    --text-color: #2D2D2D;
+    --label-color: #555;
+    --border-color: #ddd;
+    --border-focus-color: #6C63FF;
+    --error-color: #FF4D6D;
+    --font-family: 'Inter', sans-serif;
+}
+
+/* --- Fondo con gradiente dinámico --- */
+body {
+    font-family: var(--font-family);
+    background: var(--background-gradient);
+    background-size: 300% 300%;
+    animation: gradientFlow 12s ease infinite;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Animación suave del gradiente */
+@keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- Contenedor del Formulario --- */
+.form-container {
+    background-color: var(--form-background);
+    backdrop-filter: blur(16px);
+    padding: 2.8rem 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+    animation: popIn 0.7s ease;
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* --- Títulos y texto --- */
+.form-container h2 {
+    margin: 0 0 0.5rem;
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.form-container p {
+    margin-bottom: 2rem;
+    color: #555;
+    text-align: center;
+    font-size: 1rem;
+}
+
+/* --- Campos --- */
+.form-group {
+    margin-bottom: 1.4rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--label-color);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--border-focus-color);
+    box-shadow: 0 0 8px rgba(108, 99, 255, 0.3), inset 0 1px 4px rgba(0,0,0,0.05);
+}
+
+/* --- Botón de envío con efecto neón --- */
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+    background-size: 200% 200%;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    animation: buttonGlow 5s ease infinite;
+}
+
+@keyframes buttonGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.submit-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
+}
+
+/* --- Textos de Ayuda y Errores --- */
+.help-text {
+    font-size: 0.85rem;
+    color: #777;
+    display: block;
+    margin-top: 0.4rem;
+}
+
+.error-text {
+    color: var(--error-color);
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+}
+
+/* --- Efecto sutil al cargar inputs --- */
+.form-group {
+    animation: fadeUp 0.6s ease both;
+}
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+

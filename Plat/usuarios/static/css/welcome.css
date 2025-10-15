@@ -1,0 +1,102 @@
+:root {
+    --primary-color: #6C63FF;
+    --secondary-color: #FF6584;
+    --accent-color: #00C9A7;
+    --background-gradient: linear-gradient(135deg, #A1C4FD, #C2E9FB, #FBC2EB, #A6C1EE);
+    --card-background: rgba(255, 255, 255, 0.85);
+    --font-family: 'Inter', sans-serif;
+    --text-color: #2D2D2D;
+}
+
+/* --- Fondo animado --- */
+body {
+    font-family: var(--font-family);
+    background: var(--background-gradient);
+    background-size: 300% 300%;
+    animation: gradientFlow 12s ease infinite;
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+@keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- Contenedor principal --- */
+.welcome-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.welcome-card {
+    background-color: var(--card-background);
+    backdrop-filter: blur(16px);
+    padding: 3rem 2.5rem;
+    border-radius: 24px;
+    text-align: center;
+    max-width: 420px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Texto de bienvenida --- */
+.welcome-card h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.8rem;
+}
+
+.welcome-card p {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+/* --- Botón de Cerrar Sesión --- */
+.logout-btn {
+    padding: 0.9rem 2rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+    background-size: 200% 200%;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: buttonFlow 5s ease infinite;
+}
+
+@keyframes buttonFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.logout-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 101, 132, 0.4);
+}
+
+/* --- Pequeña animación flotante --- */
+.welcome-card:hover {
+    transform: translateY(-4px);
+    transition: transform 0.3s ease;
+}
