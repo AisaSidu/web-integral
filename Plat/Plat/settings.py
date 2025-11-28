@@ -10,7 +10,20 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from django.contrib.messages import constants as messages
+
+SESSION_IDLE_TIMEOUT = 60 * 5  # tiempo de inactividad en segundos antes de expirar la sesión
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'debug',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'error',
+}
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +38,20 @@ SECRET_KEY = 'django-insecure-%e4_e$hwmb5_72g(e^mg-y4bun!4_-j_%+@um@aqp1z$il2di-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+# SSL Configuration for development
+if DEBUG:
+    SECURE_SSL_REDIRECT = False  # Don't redirect to HTTPS in development
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+else:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -37,8 +63,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'usuarios',
+    'usuarios.apps.UsuariosConfig',
+    'django_recaptcha',
+    'sslserver',
 ]
+
+# reCAPTCHA configuration
+RECAPTCHA_PUBLIC_KEY = '6LdhrPIrAAAAAFyE4PitYTjf2ouYhmTRHjxuNYzY'
+RECAPTCHA_PRIVATE_KEY = '6LdhrPIrAAAAAOwGuRexizw1vQmLbSW-5w9icmCs'
+
+RECAPTCHA_USE_SSL = True
+NOCAPTCHA = True  # usa el widget "I'm not a robot"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -48,6 +83,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    # ...
+    'usuarios.middleware.SessionIdleTimeoutMiddleware',
+    'usuarios.middleware.CleanStaleActiveSessionsMiddleware',
+    # ...
 ]
 
 ROOT_URLCONF = 'Plat.urls'
@@ -121,3 +161,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+

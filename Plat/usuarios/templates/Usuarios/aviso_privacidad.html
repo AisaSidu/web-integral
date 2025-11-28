@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Aviso de Privacidad - Psyra{% endblock %}
+
+{% block head_extra %}
+<style>
+    /* Reutilizamos variables para consistencia de marca */
+    :root {
+        --primary: #4f46e5;
+        --text-main: #1f2937;
+        --text-body: #374151;
+        --text-muted: #6b7280;
+        --bg-page: #f3f4f6;
+    }
+
+    /* Fondo de la página específico para esta vista (opcional si ya lo tienes en base) */
+    body {
+        background-color: var(--bg-page);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Contenedor tipo "Hoja de Papel" */
+    .legal-container {
+        background: white;
+        max-width: 800px;
+        margin: 3rem auto;
+        padding: 3rem 4rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        position: relative;
+    }
+
+    /* Encabezado del documento */
+    .legal-header {
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .legal-header h1 {
+        color: var(--text-main);
+        font-size: 2rem;
+        margin: 0 0 0.5rem 0;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+
+    .legal-header .last-updated {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        font-style: italic;
+    }
+
+    /* Cuerpo del texto */
+    .legal-content {
+        color: var(--text-body);
+        line-height: 1.7;
+        font-size: 1.05rem;
+    }
+
+    .legal-content p {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Secciones numeradas */
+    .legal-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .legal-section h3 {
+        color: var(--primary);
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Estilo bonito para los números de sección (opcional) */
+    .section-number {
+        background-color: #e0e7ff; /* Un tono muy suave del primario */
+        color: var(--primary);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    /* Listas dentro del texto */
+    .legal-content ul {
+        background-color: #f9fafb;
+        padding: 1.5rem 1.5rem 1.5rem 3rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--primary);
+    }
+    
+    .legal-content li {
+        margin-bottom: 0.5rem;
+    }
+
+    /* Footer del documento / Botones */
+    .legal-footer {
+        margin-top: 4rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .btn-back {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        color: var(--text-main);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+        background-color: white;
+    }
+
+    .btn-back:hover {
+        background-color: #f3f4f6;
+        border-color: #9ca3af;
+    }
+
+    .btn-print {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 0.9rem;
+        text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+        .legal-container {
+            padding: 2rem 1.5rem;
+            margin: 1rem;
+        }
+        .legal-header h1 { font-size: 1.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="legal-container">
+    
+    <header class="legal-header">
+        <h1>Aviso de Privacidad</h1>
+        <p class="last-updated">Última actualización: Noviembre 2025</p>
+    </header>
+
+    <div class="legal-content">
+        <p>
+            Bienvenido a <strong>Psyra</strong>. Tu privacidad es fundamental para nosotros. 
+            Este documento detalla cómo recopilamos, utilizamos y protegemos tu información personal 
+            y sensible al utilizar nuestros servicios de salud mental y bienestar.
+        </p>
+
+        <section class="legal-section">
+            <h3><span class="section-number">1</span> Datos personales que recopilamos</h3>
+            <p>Para brindar nuestros servicios, podemos solicitar la siguiente información:</p>
+            <ul>
+                <li><strong>Datos de identificación:</strong> Nombre completo, edad.</li>
+                <li><strong>Datos de contacto:</strong> Correo electrónico, número de teléfono.</li>
+                <li><strong>Datos sensibles (Salud):</strong> Información proporcionada voluntariamente en sesiones o formularios iniciales para el perfilamiento psicológico.</li>
+                <li><strong>Datos profesionales (Solo Psicólogos):</strong> Número de cédula profesional, especialidades y certificaciones.</li>
+            </ul>
+        </section>
+
+        <section class="legal-section">
+            <h3><span class="section-number">2</span> Finalidades del tratamiento</h3>
+            <p>Utilizamos tus datos estrictamente para los siguientes fines necesarios:</p>
+            <p>
+                La creación y gestión de tu cuenta de usuario, la conexión efectiva entre pacientes y especialistas, 
+                procesos administrativos de facturación (si aplica) y el seguimiento de tu progreso dentro de la plataforma.
+            </p>
+        </section>
+
+        <section class="legal-section">
+            <h3><span class="section-number">3</span> Conservación y seguridad</h3>
+            <p>
+                Los datos se almacenarán únicamente el tiempo necesario para cumplir con las obligaciones legales y contractuales. 
+                Plat implementa medidas de seguridad técnicas (cifrado SSL) y administrativas para evitar el acceso no autorizado.
+            </p>
+        </section>
+
+        <section class="legal-section">
+            <h3><span class="section-number">4</span> Derechos ARCO</h3>
+            <p>
+                Tienes derecho a conocer qué datos tenemos de ti (<strong>A</strong>cceso), pedir que los corrijamos (<strong>R</strong>ectificación), 
+                solicitar que los eliminemos (<strong>C</strong>ancelación) u oponerte a su uso (<strong>O</strong>posición).
+            </p>
+            <p>Para ejercer estos derechos, puedes enviar una solicitud directamente a nuestro departamento de datos.</p>
+        </section>
+
+        <section class="legal-section">
+            <h3><span class="section-number">5</span> Contacto</h3>
+            <p>
+                Si tienes dudas sobre este aviso, puedes contactarnos en: <br>
+                <a href="mailto:Isaak_Vidal@hotmail.com" style="color: var(--primary); font-weight:600;">privacidad@plat.com</a>
+            </p>
+        </section>
+
+    </div>
+
+    <footer class="legal-footer">
+        <a href="javascript:history.back()" class="btn-back">← Volver</a>
+        <button class="btn-print" onclick="window.print()">Imprimir documento</button>
+    </footer>
+
+</div>
+{% endblock %}

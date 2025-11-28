@@ -1,39 +1,330 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Usuario</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-</head>
-<body>
 
-    <div class="form-container">
-        <h2>Registro de Usuario</h2>
-        <p>Crea tu cuenta para empezar.</p>
-        <form method="post">
-            {% csrf_token %}
+{% block title %}Signup Psyra{% endblock %}
 
-            {% for field in form %}
-            <div class="form-group">
-                {{ field.label_tag }}
-                {{ field }}
-                {% if field.help_text %}
-                <small class="help-text">{{ field.help_text }}</small>
-                {% endif %}
-                {% for error in field.errors %}
-                <p class="error-text">{{ error }}</p>
-                {% endfor %}
+{% block header %}{% endblock %}
+{% block body_class %}{% endblock %}
+
+{% block head_extra %}
+{{ form.media }}
+<style>
+    /* VARIABLES DE DISEÑO RAPIDO */
+    :root {
+        --primary: #4f46e5; /* Un morado/azul moderno */
+        --primary-hover: #4338ca;
+        --bg-input: #f9fafb;
+        --border-input: #d1d5db;
+        --text-main: #1f2937;
+        --text-muted: #6b7280;
+        --psych-color: #0891b2; /* Color distintivo para modo psicólogo */
+    }
+
+    /* Estilos generales del contenedor */
+    .form-container {
+        background: white;
+        max_width: 500px;
+        margin: 2rem auto;
+        padding: 2.5rem;
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    .form-container h2 {
+        text-align: center;
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+        font-size: 1.8rem;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 2rem;
+    }
+
+    /* ESTILO DEL SELECTOR DE ROL (LA MAGIA) */
+    .role-selector-wrapper {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        justify-content: center;
+    }
+    
+    /* Ocultamos los radio buttons reales */
+    .role-selector-wrapper input[type="radio"] {
+        display: none;
+    }
+
+    /* Diseñamos las etiquetas como tarjetas */
+    .role-card {
+        flex: 1;
+        padding: 1rem;
+        border: 2px solid var(--border-input);
+        border-radius: 0.75rem;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s ease;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    .role-card:hover {
+        border-color: var(--primary);
+        background: #f5f3ff;
+    }
+
+    /* Cuando el radio está checkeado (controlado por JS visualmente o selectores CSS adyacentes) */
+    /* Nota: Como Django renderiza los inputs dentro de una lista, usaremos JS para añadir la clase 'active' */
+    .role-card.active-patient {
+        border-color: var(--primary);
+        background-color: #eef2ff;
+        color: var(--primary);
+    }
+    
+    .role-card.active-psych {
+        border-color: var(--psych-color);
+        background-color: #ecfeff;
+        color: var(--psych-color);
+    }
+
+    /* INPUTS Y LABELS */
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 0.4rem;
+    }
+
+    .form-input, input[type="text"], input[type="email"], input[type="password"], select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-input);
+        border-radius: 0.5rem;
+        background-color: var(--bg-input);
+        font-size: 1rem;
+        transition: border-color 0.2s;
+        box-sizing: border-box; /* Importante para que el padding no rompa el ancho */
+    }
+
+    .form-input:focus, input:focus {
+        outline: none;
+        border-color: var(--primary);
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    /* Campos ocultos con animación */
+    [data-field-name] {
+        display: none;
+        animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* MENSAJES DE ERROR */
+    .error-text {
+        color: #dc2626;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    /* TEXTO LEGAL */
+    .legal-text {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        text-align: center;
+        margin: 1.5rem 0 1rem 0;
+        line-height: 1.4;
+    }
+    
+    .legal-text a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+    }
+    .legal-text a:hover { text-decoration: underline; }
+
+    /* BOTON */
+    .submit-btn {
+        width: 100%;
+        padding: 0.875rem;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .submit-btn:hover { background-color: var(--primary-hover); }
+
+    /* Footer link */
+    .extra-links { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; }
+    .extra-links a { color: var(--primary); font-weight: 600; text-decoration: none; }
+    
+    /* ReCaptcha centrado */
+    .captcha-group { display: flex; justify-content: center; margin: 1.5rem 0; }
+
+</style>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Bienvenido a Psyra</h2>
+    <p class="subtitle">Crea tu cuenta y comienza tu proceso.</p>
+
+    <form method="post" id="signup-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label style="text-align:center; margin-bottom:10px;">¿Cómo deseas registrarte?</label>
+            <div class="role-selector-wrapper">
+                <label class="role-card" id="card-patient" onclick="selectRole('patient')">
+                    👤 Paciente
+                </label>
+                <label class="role-card" id="card-psych" onclick="selectRole('psychologist')">
+                    🧠 Psicólogo
+                </label>
             </div>
-            {% endfor %}
+            <div style="display:none;">
+                {{ form.role }}
+            </div>
+            {% for e in form.role.errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+        </div>
+        
+        <div class="form-group">
+            <label>Usuario</label>
+            {{ form.username }}
+            {% for e in form.username.errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+        </div>
 
-            <button type="submit" class="submit-btn">Registrarse</button>
-        </form>
+        <div class="form-group">
+            <label>Correo electrónico</label>
+            {{ form.email }}
+            {% for e in form.email.errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div data-field-name="phone" class="form-group">
+            <label>Teléfono de contacto</label>
+            {{ form.phone }}
+            {% for e in form.phone.errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div data-field-name="license_number" class="form-group">
+            <label>Cédula Profesional</label>
+            {{ form.license_number }}
+            {% for e in form.license_number.errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div data-field-name="specialties" class="form-group">
+            <label>Especialidades</label>
+            {{ form.specialties }}
+            <small style="color:#6b7280; display:block; margin-top:4px;">Mantén presionado "Ctrl" para seleccionar varias.</small>
+            {% for e in form.specialties.errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label>Contraseña</label>
+            {{ form.password1 }}
+            {% for e in form.password1.errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label>Confirmar contraseña</label>
+            {{ form.password2 }}
+            {% for e in form.password2.errors %}<p class="error-text">{{ e }}</p>{% endfor %}
+        </div>
+        
+        <div class="captcha-group">
+            {{ form.captcha }}
+            {% for error in form.captcha.errors %}<p class="error-text">{{ error }}</p>{% endfor %}
+        </div>
+
+        <p class="legal-text">
+            Al crear la cuenta acepto que leí y estoy de acuerdo con el 
+            <a href="{% url 'aviso_privacidad' %}" target="_blank">Aviso de privacidad</a> y los Términos de uso de Plat.
+        </p>
+
+        <button type="submit" class="submit-btn">Crear Cuenta</button>
+    </form>
+
+    <div class="extra-links">
+        <p>¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a></p>
     </div>
+</div>
+{% endblock %}
 
-</body>
-</html>
+{% block scripts %}
+<script>
+  // Función auxiliar para seleccionar visualmente las tarjetas
+  function selectRole(value) {
+      // 1. Marcar el radio button real de Django
+      const radios = document.querySelectorAll('input[name="role"]');
+      radios.forEach(r => {
+          if(r.value === value) r.checked = true;
+      });
+
+      // 2. Actualizar estilo de las tarjetas
+      document.getElementById('card-patient').className = 'role-card' + (value === 'patient' ? ' active-patient' : '');
+      document.getElementById('card-psych').className = 'role-card' + (value === 'psychologist' ? ' active-psych' : '');
+
+      // 3. Disparar la lógica de UI
+      updateUIForRole(value);
+  }
+
+  function updateUIForRole(role){
+      const body = document.body;
+      const btn = document.querySelector('.submit-btn');
+      
+      // Cambiar clases del body (para fondos globales si existen)
+      if(role === 'psychologist'){ 
+        body.classList.remove('bg-patient'); 
+        body.classList.add('bg-psych');
+        // Cambiar color del botón para feedback visual
+        btn.style.backgroundColor = 'var(--psych-color)';
+      } else { 
+        body.classList.remove('bg-psych'); 
+        body.classList.add('bg-patient'); 
+        btn.style.backgroundColor = 'var(--primary)';
+      }
+      
+      // Mostrar/Ocultar campos con animación
+      const psychFields = ['phone','license_number','specialties'];
+      psychFields.forEach(name => {
+        const wrapper = document.querySelector('[data-field-name="'+name+'"]');
+        if(wrapper){ 
+          wrapper.style.display = (role === 'psychologist') ? 'block' : 'none'; 
+        }
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    // Verificar cuál está seleccionado al inicio (por si falla la validación y recarga)
+    const selectedRadio = document.querySelector('input[name="role"]:checked');
+    const initialRole = selectedRadio ? selectedRadio.value : 'patient';
+    
+    selectRole(initialRole);
+    
+    // Listener extra por seguridad si se cambia el radio directamente (tab keyboard nav)
+    document.querySelectorAll('input[name="role"]').forEach(inp => {
+      inp.addEventListener('change', function(){ 
+        selectRole(this.value); 
+      });
+    });
+  });
+</script>
+{% endblock %}

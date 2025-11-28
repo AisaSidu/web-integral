@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+{% load static %}
+<style>
+body {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+}
+main {
+    flex: 1 !important;
+}
+.main-footer {
+    width: 100% !important;
+    flex-shrink: 0 !important;
+}
+</style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Plat{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block head_extra %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+    {# ========= HEADER ========= #}
+    {% block header %}
+    <header class="main-header">
+        <nav>
+            <a href="{% url 'home' %}" style="margin-right:auto;font-weight:700;">Plat</a>
+            <a href="{% url 'login' %}">Iniciar sesión</a>
+            <a href="{% url 'signup' %}">Registrarse</a>
+        </nav>
+    </header>
+    {% endblock %}
+
+    {# ========= CONTENIDO PRINCIPAL ========= #}
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    {# ========= FOOTER ========= #}
+    <footer class="main-footer">
+        <a href="{% url 'aviso_privacidad' %}">Aviso de privacidad</a> · © 2025 Plat
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

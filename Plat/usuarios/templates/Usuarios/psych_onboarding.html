@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Onboarding - Subir documentos{% endblock %}
+
+{% block content %}
+<div class="container onboarding">
+  <h1>Onboarding — Subir documentos</h1>
+
+  <p>Bienvenido, <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>.</p>
+  <p>Estado de verificación: 
+    {% if profile.is_verified %}
+      <span class="badge verified">VERIFICADO</span>
+    {% else %}
+      <span class="badge pending">PENDIENTE</span>
+      <small>Tu cuenta está pendiente de revisión por el equipo administrativo.</small>
+    {% endif %}
+  </p>
+
+  <hr>
+
+  <section class="documents">
+    <h2>Documentos enviados</h2>
+    {% if documents %}
+      <table class="doc-table">
+        <thead>
+          <tr><th>Tipo</th><th>Archivo</th><th>Subido</th><th>Aceptado</th></tr>
+        </thead>
+        <tbody>
+          {% for d in documents %}
+          <tr>
+            <td>{{ d.get_doc_type_display }}</td>
+            <td>
+              <a href="{{ d.file.url }}" target="_blank" rel="noopener noreferrer">
+                Ver / Descargar
+              </a>
+            </td>
+            <td>{{ d.uploaded_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+            <td>{% if d.accepted %}Sí{% else %}No{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No has subido documentos todavía.</p>
+    {% endif %}
+  </section>
+
+  <hr>
+
+  <section class="upload">
+    <h2>Subir nuevo documento</h2>
+    {% if uploaded %}
+      <div class="notice success">Documento subido correctamente. El equipo de verificación revisará tu envío.</div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <div class="form-row">
+        <label for="id_doc_type">Tipo de documento</label>
+        {{ form.doc_type }}
+      </div>
+      <div class="form-row">
+        <label for="id_file">Archivo</label>
+        {{ form.file }}
+      </div>
+      <div class="form-row">
+        <button type="submit" class="btn">Subir documento</button>
+      </div>
+    </form>
+
+    <p class="hint">Formatos permitidos: PDF/JPG/PNG. Tamaño máximo recomendado: 5 MB.</p>
+  </section>
+
+  <hr>
+
+  <p><a href="{% url 'home' %}">Volver al inicio</a></p>
+</div>
+
+<style>
+.container.onboarding{ max-width:900px; margin:2rem auto; padding:1.6rem; background:#fff; border-radius:8px;}
+.badge.verified{ background:#2ecc71;color:#fff;padding:0.2rem .6rem;border-radius:4px;}
+.badge.pending{ background:#f39c12;color:#fff;padding:0.2rem .6rem;border-radius:4px;}
+.doc-table{ width:100%; border-collapse:collapse; margin-top:.5rem;}
+.doc-table th, .doc-table td{ padding:.5rem; border:1px solid #eee; text-align:left;}
+.notice.success{ background:#e6ffed;border-left:4px solid #2ecc71;padding:.6rem;margin:.6rem 0;}
+.hint{ color:#666; font-size:.9rem; margin-top:.6rem;}
+</style>
+{% endblock %}

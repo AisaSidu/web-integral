@@ -1,28 +1,355 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido</title>
-    <link rel="stylesheet" href="{% static 'css/welcome.css' %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-</head>
-<body>
 
-    <div class="welcome-container">
-        <div class="welcome-card">
-            <h2>¡Bienvenido, {{ user.username }}! 🎉</h2>
-            <p>Has iniciado sesión correctamente.</p>
+{% block title %}Inicio - Plat{% endblock %}
 
-            <form method="post" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn">Cerrar Sesión</button>
-            </form>
+{% block head_extra %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --bg-page: #f3f4f6;
+        --text-main: #1f2937;
+        --text-muted: #6b7280;
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    body {
+        background-color: var(--bg-page);
+    }
+
+    /* LAYOUT PRINCIPAL */
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    /* 1. HERO SECTION Y BUSQUEDA */
+    .hero-section {
+        background: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
+        border-radius: 1.5rem;
+        padding: 3rem 2rem;
+        color: white;
+        margin-bottom: 3rem;
+        box-shadow: var(--card-shadow);
+        text-align: center;
+    }
+
+    .hero-section h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-section p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+    }
+
+    /* Barra de búsqueda falsa */
+    .search-bar-container {
+        background: white;
+        padding: 0.5rem;
+        border-radius: 50px;
+        display: flex;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-input {
+        border: none;
+        flex: 1;
+        padding: 0.8rem 1.5rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .search-btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .search-btn:hover { transform: scale(1.05); }
+
+    /* 2. FILTROS RAPIDOS */
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+
+    .filter-card {
+        background: white;
+        padding: 1rem;
+        border-radius: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .filter-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: var(--card-shadow);
+    }
+
+    .filter-icon {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .filter-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-main);
+    }
+
+    /* 3. SECCIONES DE CONTENIDO */
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* TARJETAS DE PSICOLOGOS (MOCKUP) */
+    .psych-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .psych-card {
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        transition: transform 0.2s;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .psych-card:hover { transform: translateY(-5px); }
+
+    .psych-header {
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .psych-avatar {
+        width: 60px;
+        height: 60px;
+        background-color: #e0e7ff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .psych-info h3 { margin: 0; font-size: 1.1rem; color: var(--text-main); }
+    .psych-specialty { font-size: 0.85rem; color: var(--primary); font-weight: 600; text-transform: uppercase; }
+    
+    .psych-body { padding: 1.5rem; flex: 1; }
+    
+    .psych-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+
+    .rating { color: #fbbf24; font-weight: bold; }
+    .price { color: var(--text-main); font-weight: 700; }
+
+    .psych-bio {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin-top: 1rem;
+    }
+
+    .psych-footer {
+        padding: 1rem 1.5rem;
+        background-color: #f9fafb;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .book-btn {
+        width: 100%;
+        background-color: var(--text-main);
+        color: white;
+        padding: 0.7rem;
+        border-radius: 0.5rem;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .book-btn:hover { background-color: black; }
+
+    /* Logout Button flotante o discreto */
+    .logout-section {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e5e7eb;
+    }
+    
+    .btn-logout-link {
+        color: #dc2626;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: underline;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+
+    <section class="hero-section">
+        <h1>¡Hola, {{ user.username }}! 👋</h1>
+        <p>¿Cómo te sientes hoy? Encuentra al especialista ideal para ti.</p>
+        
+        <div class="search-bar-container">
+            <input type="text" class="search-input" placeholder="Buscar por nombre, problema o especialidad...">
+            <button class="search-btn"><i class="fas fa-search"></i></button>
         </div>
+    </section>
+
+    <section>
+        <div class="filters-grid">
+            <div class="filter-card">
+                <span class="filter-icon">💰</span>
+                <div class="filter-title">Presupuesto</div>
+            </div>
+            <div class="filter-card">
+                <span class="filter-icon">🧠</span>
+                <div class="filter-title">Tipo de Terapia</div>
+            </div>
+            <div class="filter-card">
+                <span class="filter-icon">⭐</span>
+                <div class="filter-title">Valoración</div>
+            </div>
+            <div class="filter-card">
+                <span class="filter-icon">📍</span>
+                <div class="filter-title">Cercanía</div>
+            </div>
+        </div>
+    </section>
+
+    <section style="margin-bottom: 3rem;">
+        <div class="section-title">
+            Tu próxima sesión
+            <a href="#" style="font-size:0.9rem; color:var(--primary); text-decoration:none;">Ver todas</a>
+        </div>
+        
+        <div style="background:white; padding:2rem; border-radius:1rem; text-align:center; border: 2px dashed #e5e7eb;">
+            <p style="color:var(--text-muted); margin-bottom:1rem;">No tienes citas programadas próximamente.</p>
+            <button style="color:var(--primary); background:none; border:1px solid var(--primary); padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer;">
+                + Agendar nueva cita
+            </button>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">Especialistas recomendados</div>
+        
+        <div class="psych-grid">
+            <div class="psych-card">
+                <div class="psych-header">
+                    <div class="psych-avatar">👩‍⚕️</div>
+                    <div class="psych-info">
+                        <div class="psych-specialty">Ansiedad y Depresión</div>
+                        <h3>Lic. Ana Martínez</h3>
+                    </div>
+                </div>
+                <div class="psych-body">
+                    <div class="psych-meta">
+                        <span class="rating">⭐ 4.9 (120 reseñas)</span>
+                        <span class="price">$500 / sesión</span>
+                    </div>
+                    <p class="psych-bio">Especialista en terapia Cognitivo-Conductual con 5 años de experiencia ayudando a jóvenes adultos.</p>
+                </div>
+                <div class="psych-footer">
+                    <button class="book-btn">Reservar Cita</button>
+                </div>
+            </div>
+
+            <div class="psych-card">
+                <div class="psych-header">
+                    <div class="psych-avatar">👨‍⚕️</div>
+                    <div class="psych-info">
+                        <div class="psych-specialty">Pareja y Familia</div>
+                        <h3>Dr. Carlos Ruiz</h3>
+                    </div>
+                </div>
+                <div class="psych-body">
+                    <div class="psych-meta">
+                        <span class="rating">⭐ 4.8 (85 reseñas)</span>
+                        <span class="price">$750 / sesión</span>
+                    </div>
+                    <p class="psych-bio">Enfoque sistémico para resolver conflictos familiares y mejorar la comunicación en pareja.</p>
+                </div>
+                <div class="psych-footer">
+                    <button class="book-btn">Reservar Cita</button>
+                </div>
+            </div>
+
+            <div class="psych-card">
+                <div class="psych-header">
+                    <div class="psych-avatar">👩‍💼</div>
+                    <div class="psych-info">
+                        <div class="psych-specialty">Psicoanálisis</div>
+                        <h3>Mtra. Sofia López</h3>
+                    </div>
+                </div>
+                <div class="psych-body">
+                    <div class="psych-meta">
+                        <span class="rating">⭐ 5.0 (40 reseñas)</span>
+                        <span class="price">$600 / sesión</span>
+                    </div>
+                    <p class="psych-bio">Espacio seguro de escucha profunda para entender el origen de tus emociones.</p>
+                </div>
+                <div class="psych-footer">
+                    <button class="book-btn">Reservar Cita</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="logout-section">
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-logout-link">Cerrar mi sesión</button>
+        </form>
     </div>
 
-</body>
-</html>
+</div>
+{% endblock %}
